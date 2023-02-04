@@ -17,6 +17,8 @@ USE `clothing_store` ;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`Company`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Company` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`Company` (
   `idCompany` INT NOT NULL,
   `companyLogo` VARBINARY(500) NULL,
@@ -28,6 +30,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`Person`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Person` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`Person` (
   `idPerson` INT NOT NULL,
   `personFisrtName` VARCHAR(100) NOT NULL,
@@ -43,6 +47,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`User`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`User` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`User` (
   `idUser` INT NOT NULL,
   `username` VARCHAR(45) NOT NULL,
@@ -62,6 +68,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`Customer`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Customer` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`Customer` (
   `idCustomer` INT NOT NULL,
   `Person_idPerson` INT NOT NULL,
@@ -78,6 +86,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`EmployeeAccess`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`EmployeeAccess` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`EmployeeAccess` (
   `idEmployeeAccess` INT NOT NULL,
   `employeeAccessLevel` VARCHAR(45) NOT NULL,
@@ -87,13 +97,15 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `clothing_store`.`Department`
+-- Table `clothing_store`.`Branch`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clothing_store`.`Department` (
-  `idDepartment` INT NOT NULL,
-  `deptName` VARCHAR(45) NOT NULL,
+DROP TABLE IF EXISTS `clothing_store`.`Branch` ;
+
+CREATE TABLE IF NOT EXISTS `clothing_store`.`Branch` (
+  `idBrancht` INT NOT NULL,
+  `branchtName` VARCHAR(45) NOT NULL,
   `Company_idCompany` INT NOT NULL,
-  PRIMARY KEY (`idDepartment`),
+  PRIMARY KEY (`idBrancht`),
   INDEX `fk_Department_Company1_idx` (`Company_idCompany` ASC) VISIBLE,
   CONSTRAINT `fk_Department_Company1`
     FOREIGN KEY (`Company_idCompany`)
@@ -106,6 +118,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`Employee`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Employee` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`Employee` (
   `idEmployee` INT NOT NULL,
   `EmployeeAccess_idEmployeeAccess` INT NOT NULL,
@@ -127,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `clothing_store`.`Employee` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Employee_Department1`
     FOREIGN KEY (`Department_idDepartment`)
-    REFERENCES `clothing_store`.`Department` (`idDepartment`)
+    REFERENCES `clothing_store`.`Branch` (`idBrancht`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -136,29 +150,15 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`Category`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Category` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`Category` (
   `idCategory` INT NOT NULL,
   `CategoryName` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idCategory`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `clothing_store`.`Product`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clothing_store`.`Product` (
-  `idProduct` INT NOT NULL,
-  `Company_idCompany` INT NOT NULL,
   `Category_idCategory` INT NOT NULL,
-  PRIMARY KEY (`idProduct`),
-  INDEX `fk_Product_Company1_idx` (`Company_idCompany` ASC) VISIBLE,
-  INDEX `fk_Product_Category1_idx` (`Category_idCategory` ASC) VISIBLE,
-  CONSTRAINT `fk_Product_Company1`
-    FOREIGN KEY (`Company_idCompany`)
-    REFERENCES `clothing_store`.`Company` (`idCompany`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Product_Category1`
+  PRIMARY KEY (`idCategory`),
+  INDEX `fk_Category_Category1_idx` (`Category_idCategory` ASC) VISIBLE,
+  CONSTRAINT `fk_Category_Category1`
     FOREIGN KEY (`Category_idCategory`)
     REFERENCES `clothing_store`.`Category` (`idCategory`)
     ON DELETE NO ACTION
@@ -167,8 +167,38 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `clothing_store`.`Product`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Product` ;
+
+CREATE TABLE IF NOT EXISTS `clothing_store`.`Product` (
+  `idProduct` INT NOT NULL,
+  `Category_idCategory` INT NOT NULL,
+  `Department_idDepartment` INT NOT NULL,
+  `productName` VARCHAR(100) NOT NULL,
+  `Productcol` VARCHAR(45) NULL,
+  PRIMARY KEY (`idProduct`),
+  INDEX `fk_Product_Category1_idx` (`Category_idCategory` ASC) VISIBLE,
+  INDEX `fk_Product_Department1_idx` (`Department_idDepartment` ASC) VISIBLE,
+  UNIQUE INDEX `productName_UNIQUE` (`productName` ASC) VISIBLE,
+  CONSTRAINT `fk_Product_Category1`
+    FOREIGN KEY (`Category_idCategory`)
+    REFERENCES `clothing_store`.`Category` (`idCategory`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Product_Department1`
+    FOREIGN KEY (`Department_idDepartment`)
+    REFERENCES `clothing_store`.`Branch` (`idBrancht`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `clothing_store`.`Supplier`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Supplier` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`Supplier` (
   `idSupplier` INT NOT NULL,
   `supplierName` VARCHAR(45) NOT NULL,
@@ -179,6 +209,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`Order`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Order` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`Order` (
   `idOrder` INT NOT NULL,
   `orderAddress` VARCHAR(500) NOT NULL,
@@ -196,6 +228,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`OrderItem`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`OrderItem` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`OrderItem` (
   `idOrderItem` INT NOT NULL,
   `itemQuan` INT NULL,
@@ -214,6 +248,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`Variant`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Variant` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`Variant` (
   `idVariant` INT NOT NULL,
   `variantColor` VARCHAR(45) NULL,
@@ -230,6 +266,7 @@ CREATE TABLE IF NOT EXISTS `clothing_store`.`Variant` (
   INDEX `fk_Variant_Product1_idx` (`Product_idProduct` ASC) VISIBLE,
   INDEX `fk_Variant_Supplier1_idx` (`Supplier_idSupplier` ASC) VISIBLE,
   INDEX `fk_Variant_OrderItem1_idx` (`OrderItem_idOrderItem` ASC) VISIBLE,
+  UNIQUE INDEX `variantName_UNIQUE` (`variantName` ASC) VISIBLE,
   CONSTRAINT `fk_Variant_Product1`
     FOREIGN KEY (`Product_idProduct`)
     REFERENCES `clothing_store`.`Product` (`idProduct`)
@@ -251,6 +288,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `clothing_store`.`PriceTracker`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`PriceTracker` ;
+
 CREATE TABLE IF NOT EXISTS `clothing_store`.`PriceTracker` (
   `idPriceTracker` INT NOT NULL,
   `priceTrackerPrePrice` BIGINT(20) NOT NULL,
@@ -260,6 +299,28 @@ CREATE TABLE IF NOT EXISTS `clothing_store`.`PriceTracker` (
   CONSTRAINT `fk_PriceTracker_Variant1`
     FOREIGN KEY (`Variant_idVariant`)
     REFERENCES `clothing_store`.`Variant` (`idVariant`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `clothing_store`.`Address`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Address` ;
+
+CREATE TABLE IF NOT EXISTS `clothing_store`.`Address` (
+  `idAddress` INT NOT NULL,
+  `country` VARCHAR(45) NOT NULL,
+  `city` VARCHAR(45) NOT NULL,
+  `detail` VARCHAR(45) NULL,
+  `postalcode` VARCHAR(45) NOT NULL,
+  `User_idUser` INT NOT NULL,
+  PRIMARY KEY (`idAddress`),
+  INDEX `fk_Address_User1_idx` (`User_idUser` ASC) VISIBLE,
+  CONSTRAINT `fk_Address_User1`
+    FOREIGN KEY (`User_idUser`)
+    REFERENCES `clothing_store`.`User` (`idUser`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
