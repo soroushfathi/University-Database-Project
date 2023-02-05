@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `clothing_store`.`Company` (
   `idCompany` INT NOT NULL,
   `companyLogo` VARBINARY(500) NULL,
   `companyAdderss` VARCHAR(45) NULL,
+  `CompanyName` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`idCompany`))
 ENGINE = InnoDB;
 
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `clothing_store`.`Person` (
   `idPerson` INT NOT NULL,
   `personFisrtName` VARCHAR(100) NOT NULL,
   `personLastName` VARCHAR(100) NOT NULL,
+  `personFullName` VARCHAR(100) GENERATED ALWAYS AS (CONCAT(`personFirstName`, ' ', `personLastName`)),
   `perosnEmail` VARCHAR(200) NOT NULL,
   `personBirthDate` DATE NULL,
   `age` INT NULL,
@@ -97,6 +99,28 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `clothing_store`.`Address`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `clothing_store`.`Address` ;
+
+CREATE TABLE IF NOT EXISTS `clothing_store`.`Address` (
+  `idAddress` INT NOT NULL,
+  `country` VARCHAR(45) NOT NULL,
+  `city` VARCHAR(45) NOT NULL,
+  `detail` VARCHAR(45) NULL,
+  `postalcode` VARCHAR(45) NOT NULL,
+  `User_idUser` INT NOT NULL,
+  PRIMARY KEY (`idAddress`),
+  INDEX `fk_Address_User1_idx` (`User_idUser` ASC) VISIBLE,
+  CONSTRAINT `fk_Address_User1`
+    FOREIGN KEY (`User_idUser`)
+    REFERENCES `clothing_store`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `clothing_store`.`Branch`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `clothing_store`.`Branch` ;
@@ -105,11 +129,18 @@ CREATE TABLE IF NOT EXISTS `clothing_store`.`Branch` (
   `idBrancht` INT NOT NULL,
   `branchtName` VARCHAR(45) NOT NULL,
   `Company_idCompany` INT NOT NULL,
+  `Address_idAddress` INT NOT NULL,
   PRIMARY KEY (`idBrancht`),
   INDEX `fk_Department_Company1_idx` (`Company_idCompany` ASC) VISIBLE,
+  INDEX `fk_Branch_Address1_idx` (`Address_idAddress` ASC) VISIBLE,
   CONSTRAINT `fk_Department_Company1`
     FOREIGN KEY (`Company_idCompany`)
     REFERENCES `clothing_store`.`Company` (`idCompany`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Branch_Address1`
+    FOREIGN KEY (`Address_idAddress`)
+    REFERENCES `clothing_store`.`Address` (`idAddress`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -299,28 +330,6 @@ CREATE TABLE IF NOT EXISTS `clothing_store`.`PriceTracker` (
   CONSTRAINT `fk_PriceTracker_Variant1`
     FOREIGN KEY (`Variant_idVariant`)
     REFERENCES `clothing_store`.`Variant` (`idVariant`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `clothing_store`.`Address`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `clothing_store`.`Address` ;
-
-CREATE TABLE IF NOT EXISTS `clothing_store`.`Address` (
-  `idAddress` INT NOT NULL,
-  `country` VARCHAR(45) NOT NULL,
-  `city` VARCHAR(45) NOT NULL,
-  `detail` VARCHAR(45) NULL,
-  `postalcode` VARCHAR(45) NOT NULL,
-  `User_idUser` INT NOT NULL,
-  PRIMARY KEY (`idAddress`),
-  INDEX `fk_Address_User1_idx` (`User_idUser` ASC) VISIBLE,
-  CONSTRAINT `fk_Address_User1`
-    FOREIGN KEY (`User_idUser`)
-    REFERENCES `clothing_store`.`User` (`idUser`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
